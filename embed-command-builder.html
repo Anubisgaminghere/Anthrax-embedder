@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Discord Embed Command Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent-color: #06f10c;
+      --dark-bg: #121214;
+      --dark-container-bg: #1e1f22;
+      --dark-input-bg: #202225;
+      --dark-input-focus-bg: #2c2f33;
+      --dark-text: #ddd;
+      --dark-muted: #b9bbbe;
+
+      --light-bg: #f7f7f7;
+      --light-container-bg: #fff;
+      --light-input-bg: #f0f0f0;
+      --light-input-focus-bg: #ddd;
+      --light-text: #111;
+      --light-muted: #666;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      background: var(--dark-bg);
+      color: var(--dark-text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      background: var(--dark-container-bg);
+      padding: 30px 40px;
+      border-radius: 12px;
+      max-width: 750px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      text-align: center;
+      color: var(--accent-color);
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--dark-muted);
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: none;
+      background: var(--dark-input-bg);
+      color: var(--dark-text);
+      font-size: 1rem;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      background: var(--dark-input-focus-bg);
+    }
+
+    button#generateBtn {
+      margin-top: 28px;
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: var(--accent-color);
+      color: #111;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(6, 241, 12, 0.6);
+    }
+
+    button#generateBtn:hover {
+      background: #05d50a;
+      box-shadow: 0 6px 20px rgba(5, 213, 10, 0.8);
+    }
+
+    #output {
+      margin-top: 30px;
+      background: var(--dark-input-bg);
+      padding: 18px;
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+      user-select: all;
+      color: var(--dark-muted);
+      min-height: 60px;
+    }
+
+    #themeToggle {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: transparent;
+      border: 2px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 6px 12px;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    #themeToggle:hover {
+      background: var(--accent-color);
+      color: #111;
+    }
+
+    /* LIGHT THEME */
+
+    body.light {
+      background: var(--light-bg);
+      color: var(--light-text);
+    }
+    body.light .container {
+      background: var(--light-container-bg);
+      color: var(--light-text);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    body.light label {
+      color: var(--light-muted);
+    }
+    body.light input[type="text"],
+    body.light textarea {
+      background: var(--light-input-bg);
+      color: var(--light-text);
+    }
+    body.light input[type="text"]:focus,
+    body.light textarea:focus {
+      background: var(--light-input-focus-bg);
+    }
+    body.light button#generateBtn {
+      background: var(--accent-color);
+      color: #111;
+      box-shadow: 0 4px 14px rgba(6, 241, 12, 0.6);
+    }
+    body.light button#generateBtn:hover {
+      background: #05d50a;
+      box-shadow: 0 6px 20px rgba(5, 213, 10, 0.8);
+    }
+    body.light #output {
+      background: var(--light-input-bg);
+      color: var(--light-muted);
+    }
+
+    /* LIVE PREVIEW */
+    .embed-preview {
+      margin-top: 35px;
+      padding: 16px;
+      border-left: 4px solid var(--accent-color);
+      background: #2b2d31;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .embed-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--accent-color);
+    }
+
+    .embed-desc {
+      white-space: pre-line;
+      margin-top: 8px;
+    }
+
+    .embed-image {
+      margin-top: 12px;
+      max-width: 100%;
+      border-radius: 6px;
+    }
+
+    .embed-thumb {
+      float: right;
+      max-height: 50px;
+      margin-left: 10px;
+      border-radius: 4px;
+    }
+
+    .embed-footer {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #aaa;
+      border-top: 1px solid #444;
+      padding-top: 6px;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button id="themeToggle">Light Mode</button>
+
+  <h1>Discord Embed Command Builder</h1>
+
+  <label for="title">Title</label>
+  <input type="text" id="title" placeholder="Embed title" />
+
+  <label for="description">Description (supports multiple lines)</label>
+  <textarea id="description" rows="4" placeholder="Embed description"></textarea>
+
+  <label for="channel">Channel</label>
+  <input type="text" id="channel" placeholder="#channel or channel ID" />
+
+  <label for="thumbnail">Thumbnail URL</label>
+  <input type="text" id="thumbnail" placeholder="https://example.com/thumb.png" />
+
+  <label for="image">Image URL</label>
+  <input type="text" id="image" placeholder="https://example.com/image.png" />
+
+  <label for="footer">Footer</label>
+  <input type="text" id="footer" placeholder="Optional footer text" />
+
+  <button id="generateBtn">Generate /embed Command</button>
+
+  <h2 style="text-align:center; margin-top:30px;">Command Output</h2>
+  <div id="output"></div>
+
+  <h2 style="text-align:center; margin-top:30px;">Live Embed Preview</h2>
+  <div class="embed-preview" id="previewBox">
+    <div class="embed-thumb" id="previewThumb"></div>
+    <div class="embed-title" id="previewTitle">Title appears here</div>
+    <div class="embed-desc" id="previewDesc">Description appears here</div>
+    <img id="previewImage" class="embed-image" style="display:none;" />
+    <div class="embed-footer" id="previewFooter"></div>
+  </div>
+</div>
+
+<script>
+  const titleInput = document.getElementById('title');
+  const descInput = document.getElementById('description');
+  const channelInput = document.getElementById('channel');
+  const thumbInput = document.getElementById('thumbnail');
+  const imageInput = document.getElementById('image');
+  const footerInput = document.getElementById('footer');
+  const generateBtn = document.getElementById('generateBtn');
+  const outputDiv = document.getElementById('output');
+  const themeToggle = document.getElementById('themeToggle');
+  const body = document.body;
+
+  // Preview Elements
+  const previewTitle = document.getElementById('previewTitle');
+  const previewDesc = document.getElementById('previewDesc');
+  const previewThumb = document.getElementById('previewThumb');
+  const previewImage = document.getElementById('previewImage');
+  const previewFooter = document.getElementById('previewFooter');
+
+  function escapeNewlines(text) {
+    return text.replace(/\n/g, '\\n');
+  }
+
+  function generateEmbedCommand() {
+    const title = titleInput.value.trim();
+    const description = escapeNewlines(descInput.value.trim());
+    const channel = channelInput.value.trim();
+    const thumbnail = thumbInput.value.trim();
+    const image = imageInput.value.trim();
+    const footer = footerInput.value.trim();
+
+    let cmd = '/embed';
+    if (title) cmd += ` title:${title}`;
+    if (description) cmd += ` description:${description}`;
+    if (channel) cmd += ` channel:${channel}`;
+    if (thumbnail) cmd += ` thumbnail:${thumbnail}`;
+    if (image) cmd += ` image:${image}`;
+    if (footer) cmd += ` footer:${footer}`;
+
+    return cmd;
+  }
+
+  function updatePreview() {
+    previewTitle.textContent = titleInput.value || "(No Title)";
+    previewDesc.textContent = descInput.value || "";
+    previewFooter.textContent = footerInput.value || "";
+
+    const thumb = thumbInput.value.trim();
+    if (thumb) {
+      previewThumb.innerHTML = `<img src="${thumb}" class="embed-thumb">`;
+    } else {
+      previewThumb.innerHTML = '';
+    }
+
+    const image = imageInput.value.trim();
+    if (image) {
+      previewImage.style.display = 'block';
+      previewImage.src = image;
+    } else {
+      previewImage.style.display = 'none';
+    }
+  }
+
+  generateBtn.addEventListener('click', () => {
+    const cmd = generateEmbedCommand();
+    outputDiv.textContent = cmd;
+  });
+
+  // Live preview
+  [titleInput, descInput, thumbInput, imageInput, footerInput].forEach(input => {
+    input.addEventListener('input', updatePreview);
+  });
+
+  // Theme toggle
+  themeToggle.addEventListener('click', () => {
+    body.classList.toggle('light');
+    themeToggle.textContent = body.classList.contains('light') ? 'Dark Mode' : 'Light Mode';
+  });
+
+  updatePreview();
+</script>
+
+</body>
+</html>
